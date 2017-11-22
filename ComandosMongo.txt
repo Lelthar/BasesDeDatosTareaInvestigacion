@@ -1,0 +1,41 @@
+// Crea base de datos
+use pruebaMongo
+
+// Crear tabla
+// Primero se asigna tupla a una variable
+v = { nombre: "gears of war", tipo: "shooter" }
+a = { nombre: "crash bandocoot 1", tipo: "plataforma" }
+b = { nombre: "dark souls", tipo: "rol de accion" }
+c = { nombre: "hollow knight", tipo: "metroidvania" }
+d = { nombre: "sniper elite", tipo: "shooter" }
+
+// Luego se hace insert de la variable en una tabla
+// En esta parte se le asigna el nombre "juegos" a la tabla
+// Los insert se hacen así, primero se asigna tupla a una variable y luego se hace insert.
+db.juegos.insert(v)
+db.juegos.insert(a)
+db.juegos.insert(b)
+db.juegos.insert(c)
+db.juegos.insert(d)
+
+// SELECT * FROM juegos
+db.juegos.find()
+{ "_id" : ObjectId("5a15a9178985c1e45788c032"), "nombre" : "gears of war", "tipo" : "shooter" }
+{ "_id" : ObjectId("5a15aae68985c1e45788c033"), "nombre" : "crash bandocoot 1", "tipo" : "plataforma" }
+{ "_id" : ObjectId("5a15ab818985c1e45788c034"), "nombre" : "dark souls", "tipo" : "rol de accion" }
+{ "_id" : ObjectId("5a15abe58985c1e45788c035"), "nombre" : "hollow knight", "tipo" : "metroidvania" }
+{ "_id" : ObjectId("5a15ac0b8985c1e45788c036"), "nombre" : "sniper elite", "tipo" : "shooter" }
+
+//SELECT * FROM juegos WHERE tipo = 'shooter'
+db.juegos.find({ tipo: "shooter" })
+{ "_id" : ObjectId("5a15a9178985c1e45788c032"), "nombre" : "gears of war", "tipo" : "shooter" }
+{ "_id" : ObjectId("5a15ac0b8985c1e45788c036"), "nombre" : "sniper elite", "tipo" : "shooter" }
+
+// SELECT de primeros n elementos
+// Muestra los primeros 3 elementos en este caso.
+db.juegos.find().limit(3) // n = 3
+{ "_id" : ObjectId("5a15a9178985c1e45788c032"), "nombre" : "gears of war", "tipo" : "shooter" }
+{ "_id" : ObjectId("5a15aae68985c1e45788c033"), "nombre" : "crash bandocoot 1", "tipo" : "plataforma" }
+{ "_id" : ObjectId("5a15ab818985c1e45788c034"), "nombre" : "dark souls", "tipo" : "rol de accion" }
+
+
