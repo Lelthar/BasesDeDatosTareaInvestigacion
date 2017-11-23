@@ -13,6 +13,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.Mongo;
+import java.awt.HeadlessException;
 
 import java.net.UnknownHostException;
 import javax.swing.ImageIcon;
@@ -39,13 +40,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
         this.jLabel1.setText(""); this.jLabel1.setIcon(iconoFlecha); 
         this.jLabel2.setText(""); this.jLabel2.setIcon(iconoFlecha); 
         this.cerrar_sesion_jMenuItem.setVisible(false);
+        this.eliminar_cuenta_jMenuItem.setVisible(false);
         LabelListener.createListener(this.crud_partidos_jLabel, 1);
         LabelListener.createListener(this.crud_comentarios_jLabel, 2);
         VariablesSistema.setNombreUsuario("");
         VariablesSistema.setPasswordUsuario("");
         this.setLocation(300, 100);
         this.setTitle("Menú Principal");
-        this.getContentPane().setBackground(new java.awt.Color(72, 26, 20));
+        this.getContentPane().setBackground(new java.awt.Color(25, 30, 39));
         mongoConexionAficionado("MongoBaseDatos", "aficionado");
     }
     
@@ -189,37 +191,39 @@ public class MenuPrincipal extends javax.swing.JFrame {
      * @param evt 
      */
     private void inicio_sesion_jMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inicio_sesion_jMenuItemActionPerformed
-        JTextField nombre_usuario_jTextField = new JTextField(); 
-        JPasswordField password_JPasswordField = new JPasswordField();
-        Object[] mensaje = { "Nombre de Usuario: ", nombre_usuario_jTextField,
-                             "Contraseña: ", password_JPasswordField };
-        int opcion = JOptionPane.showConfirmDialog(null, mensaje, "Inicio de Sesión ", JOptionPane.OK_CANCEL_OPTION);
-        if (opcion == JOptionPane.OK_OPTION) {
-            String nombreUsuario = nombre_usuario_jTextField.getText();
-            String password = password_JPasswordField.getText();
-            if (nombreUsuario.equals("") || password.equals("")) {
-                JOptionPane.showMessageDialog(null, "ERROR: entradas vacías.", "", JOptionPane.ERROR_MESSAGE);
-            } else {
-                BasicDBObject documento = new BasicDBObject();
-                documento.put("codigo_aficionado", nombreUsuario);
-                DBCursor cursor = this.tabla.find(documento);
-                if (cursor.count() == 0) {
-                    JOptionPane.showMessageDialog(null, "ERROR: no se ha podido iniciar sesión.", "", JOptionPane.ERROR_MESSAGE);
+        try {
+            JTextField nombre_usuario_jTextField = new JTextField(); 
+            JPasswordField password_JPasswordField = new JPasswordField();
+            Object[] mensaje = { "Nombre de Usuario: ", nombre_usuario_jTextField,
+                                 "Contraseña: ", password_JPasswordField };
+            int opcion = JOptionPane.showConfirmDialog(null, mensaje, "Inicio de Sesión ", JOptionPane.OK_CANCEL_OPTION);
+            if (opcion == JOptionPane.OK_OPTION) {
+                String nombreUsuario = nombre_usuario_jTextField.getText();
+                String password = password_JPasswordField.getText();
+                if (nombreUsuario.equals("") || password.equals("")) {
+                    JOptionPane.showMessageDialog(null, "ERROR: entradas vacías.", "", JOptionPane.ERROR_MESSAGE);
                 } else {
-                    while (cursor.hasNext()){
-                        if (cursor.next().get("password").equals(password)) {
-                            VariablesSistema.setNombreUsuario(nombreUsuario);
-                            VariablesSistema.setPasswordUsuario(password);
-                            this.registrarse_jMenuItem.setVisible(false);
-                            this.inicio_sesion_jMenuItem.setVisible(false);
-                            this.cerrar_sesion_jMenuItem.setVisible(true);
-                            JOptionPane.showMessageDialog(null, "Bienvenido " + nombreUsuario + ".");
-                        } else {
-                            JOptionPane.showMessageDialog(null, "ERROR: no se ha podido iniciar sesión.", "", JOptionPane.ERROR_MESSAGE);
-                        }
+                    BasicDBObject documento = new BasicDBObject();
+                    documento.put("codigo_aficionado", nombreUsuario);
+                    String estadoUsuario = this.tabla.find(documento).next().get("estado").toString();
+                    String passwordUsuario = this.tabla.find(documento).next().get("password").toString();
+                    if (estadoUsuario.equals("inactivo")) {
+                        JOptionPane.showMessageDialog(null, "ERROR: este usuario está inactivo.", "", JOptionPane.ERROR_MESSAGE);
+                    } else if (!passwordUsuario.equals(password)) {
+                        JOptionPane.showMessageDialog(null, "ERROR: no se ha podido iniciar sesión.", "", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        VariablesSistema.setNombreUsuario(nombreUsuario);
+                        VariablesSistema.setPasswordUsuario(password);
+                        this.registrarse_jMenuItem.setVisible(false);
+                        this.inicio_sesion_jMenuItem.setVisible(false);
+                        this.cerrar_sesion_jMenuItem.setVisible(true);
+                        this.eliminar_cuenta_jMenuItem.setVisible(true);
+                        JOptionPane.showMessageDialog(null, "Bienvenido " + nombreUsuario + ".");
                     }
                 }
             }
+        } catch (HeadlessException ex) {
+            JOptionPane.showMessageDialog(null, "ERROR: no se ha podido iniciar sesión.", "", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_inicio_sesion_jMenuItemActionPerformed
 
@@ -235,6 +239,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
             this.registrarse_jMenuItem.setVisible(true);
             this.inicio_sesion_jMenuItem.setVisible(true);
             this.cerrar_sesion_jMenuItem.setVisible(false);
+            this.eliminar_cuenta_jMenuItem.setVisible(false);
             JOptionPane.showMessageDialog(null, "Ha cerrado su sesión.");
         }
     }//GEN-LAST:event_cerrar_sesion_jMenuItemActionPerformed
@@ -253,7 +258,22 @@ public class MenuPrincipal extends javax.swing.JFrame {
      * @param evt 
      */
     private void eliminar_cuenta_jMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminar_cuenta_jMenuItemActionPerformed
-        // TODO add your handling code here:
+        int opcion = JOptionPane.showConfirmDialog(null, "Está seguro que desea eiminar su cuenta?\n" 
+                + "Si la elimina no prodrá volver a utilizarla.", "", JOptionPane.OK_CANCEL_OPTION);
+        if (opcion == JOptionPane.OK_OPTION) {
+            BasicDBObject documento = new BasicDBObject();
+            documento.put("codigo_aficionado", VariablesSistema.getNombreUsuario());
+            BasicDBObject documentoUpdate = new BasicDBObject();
+            documentoUpdate.put("$set", new BasicDBObject().append("estado", "inactivo"));
+            this.tabla.update(documento, documentoUpdate);
+            VariablesSistema.setNombreUsuario("");
+            VariablesSistema.setPasswordUsuario("");
+            this.registrarse_jMenuItem.setVisible(true);
+            this.inicio_sesion_jMenuItem.setVisible(true);
+            this.cerrar_sesion_jMenuItem.setVisible(false);
+            this.eliminar_cuenta_jMenuItem.setVisible(false);
+            JOptionPane.showMessageDialog(null, "Su cuenta ha sido eliminada.");
+        }
     }//GEN-LAST:event_eliminar_cuenta_jMenuItemActionPerformed
 
     /**
@@ -275,10 +295,6 @@ public class MenuPrincipal extends javax.swing.JFrame {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
-        
-        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */

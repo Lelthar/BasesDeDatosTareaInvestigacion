@@ -7,7 +7,6 @@ package ValoresGlobales;
 
 import Interfaz.CRUDComentario;
 import Interfaz.CRUDPartido;
-import ValoresGlobales.VariablesSistema;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
@@ -27,12 +26,13 @@ public class LabelListener {
             
             @Override
             public void mouseClicked(MouseEvent e) { 
-                jLabelListener.setForeground(new java.awt.Color(210, 10, 17));
+                jLabelListener.setForeground(new java.awt.Color(66, 73, 73));
             }
             
             @Override
+            @SuppressWarnings("ConvertToStringSwitch")
             public void mousePressed(MouseEvent e) {
-                jLabelListener.setForeground(new java.awt.Color(210, 10, 17));
+                jLabelListener.setForeground(new java.awt.Color(66, 73, 73));
                 switch (opcion) {
 
                     // CRUD partidos.

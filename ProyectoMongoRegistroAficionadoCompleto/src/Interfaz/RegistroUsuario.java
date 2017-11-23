@@ -37,7 +37,7 @@ public class RegistroUsuario extends javax.swing.JFrame {
         this.setLocation(200, 0);
         this.setTitle("Registro de Aficionado");
         this.setDefaultCloseOperation(this.DO_NOTHING_ON_CLOSE);
-        this.getContentPane().setBackground(new java.awt.Color(72, 26, 20));
+        this.getContentPane().setBackground(new java.awt.Color(25, 30, 39));
         mongoConexionAficionado("MongoBaseDatos", "aficionado");
     }
     
@@ -63,10 +63,8 @@ public class RegistroUsuario extends javax.swing.JFrame {
      */
     private boolean existeCodigo(String codigoAficionado) {
         BasicDBObject documento = new BasicDBObject();
-        DBCursor cursor;
         documento.put("codigo_aficionado", codigoAficionado);
-        cursor = this.tabla.find(documento);
-        return cursor.count() != 0;
+        return this.tabla.find(documento).count() != 0;
     }
     
     /**
@@ -74,10 +72,8 @@ public class RegistroUsuario extends javax.swing.JFrame {
      */
     private boolean existeCorreo(String correoElectronico) {
         BasicDBObject documento = new BasicDBObject();
-        DBCursor cursor;
         documento.put("correo_electronico", correoElectronico);
-        cursor = this.tabla.find(documento);
-        return cursor.count() != 0;
+        return this.tabla.find(documento).count() != 0;
     }
 
     /**
@@ -195,7 +191,7 @@ public class RegistroUsuario extends javax.swing.JFrame {
             foto_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(foto_jPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(mostrar_foto_jLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
+                .addComponent(mostrar_foto_jLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -294,7 +290,8 @@ public class RegistroUsuario extends javax.swing.JFrame {
                         .addGap(36, 36, 36)
                         .addComponent(info4_jLabel)
                         .addGap(18, 18, 18)
-                        .addComponent(foto_jPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(foto_jPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(38, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(24, 24, 24)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -312,11 +309,11 @@ public class RegistroUsuario extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(ver_email_jLabel)
                             .addComponent(ver_email_jComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(76, 76, 76)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(registrar_jButton)
-                            .addComponent(volver_jButton))))
-                .addContainerGap(42, Short.MAX_VALUE))
+                            .addComponent(volver_jButton))
+                        .addGap(73, 73, 73))))
         );
 
         pack();
@@ -378,24 +375,22 @@ public class RegistroUsuario extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "ERROR: debe de colocar un correo electrónico.", "", JOptionPane.ERROR_MESSAGE);       
         } else if (!correoElectronico.matches("[a-zA-Z0-9_]+(@gmail|@hotmail|@yahoo)(.com)")) {
             JOptionPane.showMessageDialog(null, "ERROR: formato de correo electrónico incorrecto.", "", JOptionPane.ERROR_MESSAGE);
-        } else {
-            if (existeCodigo(codigoAficionado)) {
+        } else if (existeCodigo(codigoAficionado)) {
                 JOptionPane.showMessageDialog(null, "ERROR: el código de usuario ya existe.", "", JOptionPane.ERROR_MESSAGE);
-            } else if (existeCorreo(correoElectronico)) {
-                JOptionPane.showMessageDialog(null, "ERROR: el correo electrónico ya existe.", "", JOptionPane.ERROR_MESSAGE);
-            } else {
-                BasicDBObject documento = new BasicDBObject();
-                documento.put("codigo_aficionado", codigoAficionado);
-                documento.put("password", password);
-                documento.put("foto_aficionado", this.pathImagen);
-                documento.put("despliegue_foto", (String) this.ver_foto_jComboBox.getSelectedItem());
-                documento.put("correo_electronico", correoElectronico);
-                documento.put("despliegue_correo", (String) this.ver_email_jComboBox.getSelectedItem());
-                documento.put("estado", "activo");
-                this.tabla.insert(documento);
-                JOptionPane.showMessageDialog(null, "Se ha registrado exitosamente.");
-                this.registrar_jButton.enable(false);
-            }
+        } else if (existeCorreo(correoElectronico)) {
+            JOptionPane.showMessageDialog(null, "ERROR: el correo electrónico ya existe.", "", JOptionPane.ERROR_MESSAGE);
+        } else {
+            BasicDBObject documento = new BasicDBObject();
+            documento.put("codigo_aficionado", codigoAficionado);
+            documento.put("password", password);
+            documento.put("foto_aficionado", this.pathImagen);
+            documento.put("despliegue_foto", (String) this.ver_foto_jComboBox.getSelectedItem());
+            documento.put("correo_electronico", correoElectronico);
+            documento.put("despliegue_correo", (String) this.ver_email_jComboBox.getSelectedItem());
+            documento.put("estado", "activo");
+            this.tabla.insert(documento);
+            JOptionPane.showMessageDialog(null, "Se ha registrado exitosamente.");
+            this.registrar_jButton.enable(false);
         }
     }//GEN-LAST:event_registrar_jButtonActionPerformed
 

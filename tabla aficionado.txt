@@ -1,0 +1,12 @@
+// El dato de la foto del aficionado se puede cambiar desúés con un update.
+// v tiene el formato de aficionado.
+
+v = {codigo_aficionado:"ADMINISTRADOR", password:"ADMINISTRADOR", foto_aficionado:"path", despliegue_foto:"NO", correo_electronico:"administrador4466@gmail.com", despliegue_correo:"NO", estado:"activo"}
+
+// Valores en tabla aficionado.
+// Para que los inserten y prueben.
+// La forma más fácil de insertar es desde NetBeans.
+// Para ver que tiene la base de datos le hacen un find() desúés de que insertan en el cmd.
+db.aficionado.find()
+{ "_id" : ObjectId("5a16f37a6beaa7d6420db255"), "codigo_aficionado" : "ADMINISTRADOR", "password" : "ADMINISTRADOR", "foto_aficionado" : "path", "despliegue_foto" : "NO", "correo_electronico" : "administrador4466@gmail.com", "despliegue_correo" : "NO", "estado" : "activo" }
+{ "_id" : ObjectId("5a16f878778baeb7a376e90a"), "codigo_aficionado" : "qwerty", "password" : "qwerty1234", "foto_aficionado" : "C:\\Users\\Jeanca\\Pictures\\Memes\\IMG-20170813-WA0023.jpg", "despliegue_foto" : "SI", "correo_electronico" : "qwerty123@gmail.com", "despliegue_correo" : "SI", "estado" : "inactivo" }
