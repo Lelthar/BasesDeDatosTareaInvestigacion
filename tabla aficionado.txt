@@ -1,7 +1,11 @@
+// Base de Datos
+use MongoBaseDatos
+
 // El dato de la foto del aficionado se puede cambiar desúés con un update.
 // v tiene el formato de aficionado.
 
 v = {codigo_aficionado:"ADMINISTRADOR", password:"ADMINISTRADOR", foto_aficionado:"path", despliegue_foto:"NO", correo_electronico:"administrador4466@gmail.com", despliegue_correo:"NO", estado:"activo"}
+db.aficionado.insert(v)
 
 // Valores en tabla aficionado.
 // Para que los inserten y prueben.
