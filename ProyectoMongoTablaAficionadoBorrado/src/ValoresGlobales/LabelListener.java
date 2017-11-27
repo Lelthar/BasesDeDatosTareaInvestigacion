@@ -7,7 +7,6 @@ package ValoresGlobales;
 
 import Interfaz.CRUDComentario;
 import Interfaz.CRUDPartido;
-import Interfaz.CRUDResumen;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
@@ -41,8 +40,8 @@ public class LabelListener {
                         if (VariablesSistema.getNombreUsuario().equals("")) {
                             JOptionPane.showMessageDialog(null, "ERROR: debe iniciar sesión primero.", "", JOptionPane.ERROR_MESSAGE);
                         } else if (VariablesSistema.getNombreUsuario().equals("ADMINISTRADOR")){
-                            CRUDResumen resumen = new CRUDResumen();
-                            resumen.setVisible(true);
+                            CRUDPartido partido = new CRUDPartido();
+                            partido.setVisible(true);
                         } else {
                             JOptionPane.showMessageDialog(null, "ERROR: solo ADMINISTRADOR puede acceder a esta función.", "", JOptionPane.ERROR_MESSAGE);
                         }
