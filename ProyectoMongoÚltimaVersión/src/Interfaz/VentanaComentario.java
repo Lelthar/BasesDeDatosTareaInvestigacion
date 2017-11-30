@@ -36,7 +36,7 @@ public class VentanaComentario extends javax.swing.JFrame {
         numeroComentario = pNumeroComentario;
         numeroResumen = pNumeroResumen;
         codigoAficionado = pCodigoAficionado;
-  
+        obtenerTablas("MongoBaseDatos");
     }
     private void obtenerTablas(String nombreBD) {
         Mongo mongo;
@@ -131,24 +131,34 @@ public class VentanaComentario extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        System.out.println("1a");
+
         Date date = new Date();
         DateFormat formatoDia = new SimpleDateFormat("dd/MM/yyyy");
-        DateFormat formatoHora = new SimpleDateFormat("HH:mm:ss");
+        DateFormat formatoHora = new SimpleDateFormat("HH:mm");
             
         BasicDBObject insercionDatos = new BasicDBObject();
         insercionDatos.put("numero_comentario", this.numeroComentario);
+        System.out.println(this.numeroComentario);
         insercionDatos.put("numero_resumen", this.numeroResumen);
+        System.out.println(this.numeroResumen);
         insercionDatos.put("codigo_aficionado", this.codigoAficionado);
+        System.out.println(this.codigoAficionado);
         insercionDatos.put("fecha", formatoDia.format(date));
+        System.out.println(formatoDia.format(date));
         insercionDatos.put("hora", formatoHora.format(date));
+        System.out.println(formatoHora.format(date));
         insercionDatos.put("comentario", jTextArea1.getText());
+        System.out.println(jTextArea1.getText());
         insercionDatos.put("comentario_padre", "null");
-        System.out.println("1b");
+  
         this.tablaComentarios.insert(insercionDatos);
-        System.out.println("1c");
+        
         JOptionPane.showMessageDialog(null, "Se ha añadido su comentario");
         
+        AgregarComentario ventanaResumen = new AgregarComentario(this.codigoAficionado, this.numeroResumen);
+        this.setVisible(false);
+        ventanaResumen.setVisible(true);
+        //{ "_id" : ObjectId("5a1fed023a4f3b96c2df6b4d"), "numero_comentario" : 1, "numero_resumen" : 1, "codigo_aficionado" : "ADMINISTRADOR", "fecha" : "30/11/17", "hora" : "5:35", "comentario" : "hola mundo", "comentario_padre" : "null" }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
