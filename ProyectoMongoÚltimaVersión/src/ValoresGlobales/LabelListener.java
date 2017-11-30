@@ -71,11 +71,11 @@ public class LabelListener {
                                 if (partido.equals("")) {
                                     
                                 } else {
-                                    //ClaseAux.Variables.setConsultaSQL("");
+                                    
                                     AgregarComentario ventanaResumenes = new AgregarComentario(VariablesSistema.getNombreUsuario(),Integer.parseInt(partido));
                                     ventanaResumenes.setVisible(true);
                                 }
-                            
+                            }
                         } else {
                             JOptionPane.showMessageDialog(null, "ERROR: debe iniciar sesión primero.", "", JOptionPane.ERROR_MESSAGE);
                         }
