@@ -42,10 +42,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         initComponents();
         this.jLabel1.setText(""); this.jLabel1.setIcon(iconoFlecha); 
         this.jLabel2.setText(""); this.jLabel2.setIcon(iconoFlecha); 
+        this.jLabel3.setText(""); this.jLabel3.setIcon(iconoFlecha);
         this.cerrar_sesion_jMenuItem.setVisible(false);
         this.eliminar_cuenta_jMenuItem.setVisible(false);
         LabelListener.createListener(this.crud_partidos_jLabel, 1);
         LabelListener.createListener(this.crud_comentarios_jLabel, 2);
+        LabelListener.createListener(this.consultar_resumen_jLabel, 3);
         VariablesSistema.setNombreUsuario("");
         VariablesSistema.setPasswordUsuario("");
         this.setLocation(300, 100);
@@ -83,6 +85,8 @@ public class MenuPrincipal extends javax.swing.JFrame {
         titulo_jLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        consultar_resumen_jLabel = new javax.swing.JLabel();
         opciones_jMenuBar = new javax.swing.JMenuBar();
         opciones_jMenu = new javax.swing.JMenu();
         registrarse_jMenuItem = new javax.swing.JMenuItem();
@@ -111,6 +115,13 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jLabel1.setText("1");
 
         jLabel2.setText("2");
+
+        jLabel3.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jLabel3.setText("3");
+
+        consultar_resumen_jLabel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        consultar_resumen_jLabel.setForeground(new java.awt.Color(255, 255, 255));
+        consultar_resumen_jLabel.setText("Consultar Resumen");
 
         opciones_jMenu.setText("Opciones");
 
@@ -157,18 +168,24 @@ public class MenuPrincipal extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(82, 82, 82)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addGap(40, 40, 40)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(crud_partidos_jLabel)
-                            .addComponent(crud_comentarios_jLabel)))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(42, 42, 42)
-                        .addComponent(titulo_jLabel)))
-                .addContainerGap(159, Short.MAX_VALUE))
+                        .addComponent(titulo_jLabel))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(82, 82, 82)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel3))
+                                .addGap(40, 40, 40)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(consultar_resumen_jLabel)
+                                    .addComponent(crud_partidos_jLabel)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(40, 40, 40)
+                                .addComponent(crud_comentarios_jLabel)))))
+                .addContainerGap(158, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -179,11 +196,15 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(crud_partidos_jLabel)
                     .addComponent(jLabel1))
-                .addGap(43, 43, 43)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(crud_comentarios_jLabel)
                     .addComponent(jLabel2))
-                .addContainerGap(111, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(consultar_resumen_jLabel))
+                .addContainerGap(99, Short.MAX_VALUE))
         );
 
         pack();
@@ -323,12 +344,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem cerrar_sesion_jMenuItem;
+    private javax.swing.JLabel consultar_resumen_jLabel;
     private javax.swing.JLabel crud_comentarios_jLabel;
     private javax.swing.JLabel crud_partidos_jLabel;
     private javax.swing.JMenuItem eliminar_cuenta_jMenuItem;
     private javax.swing.JMenuItem inicio_sesion_jMenuItem;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenu opciones_jMenu;
     private javax.swing.JMenuBar opciones_jMenuBar;

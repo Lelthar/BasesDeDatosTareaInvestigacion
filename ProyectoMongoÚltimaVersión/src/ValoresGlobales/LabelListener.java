@@ -56,6 +56,15 @@ public class LabelListener {
                             JOptionPane.showMessageDialog(null, "ERROR: debe iniciar sesión primero.", "", JOptionPane.ERROR_MESSAGE);
                         }
                         break;
+                    
+                    // Consulta de un Resumen.
+                    case 3:
+                        if (!VariablesSistema.getNombreUsuario().equals("")) {
+                            // Gerald ponga aquí la ventana
+                        } else {
+                            JOptionPane.showMessageDialog(null, "ERROR: debe iniciar sesión primero.", "", JOptionPane.ERROR_MESSAGE);
+                        }
+                        break;
                 }
             }
             @Override
