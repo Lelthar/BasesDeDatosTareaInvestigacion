@@ -5,6 +5,7 @@
  */
 package ValoresGlobales;
 
+import Interfaz.AgregarComentario;
 import Interfaz.CRUDComentario;
 import Interfaz.CRUDPartido;
 import Interfaz.CRUDResumen;
@@ -14,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 /**
  *
@@ -61,7 +63,19 @@ public class LabelListener {
                     // Consulta de un Resumen.
                     case 3:
                         if (!VariablesSistema.getNombreUsuario().equals("")) {
-                            // Gerald ponga aquí la ventana
+                            JTextField entradaPartido = new JTextField();
+                            Object[] mensaje = { "Numero de resumen: ", entradaPartido };
+                            int opcion = JOptionPane.showConfirmDialog(null, mensaje, "Llene la siguiente información: ", JOptionPane.OK_CANCEL_OPTION);
+                            if (opcion == JOptionPane.OK_OPTION) {
+                                String partido = entradaPartido.getText();
+                                if (partido.equals("")) {
+                                    
+                                } else {
+                                    //ClaseAux.Variables.setConsultaSQL("");
+                                    AgregarComentario ventanaResumenes = new AgregarComentario(VariablesSistema.getNombreUsuario(),Integer.parseInt(partido));
+                                    ventanaResumenes.setVisible(true);
+                                }
+                            
                         } else {
                             JOptionPane.showMessageDialog(null, "ERROR: debe iniciar sesión primero.", "", JOptionPane.ERROR_MESSAGE);
                         }
