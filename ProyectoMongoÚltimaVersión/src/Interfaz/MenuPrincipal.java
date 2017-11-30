@@ -12,7 +12,10 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.Mongo;
+import java.awt.Desktop;
 import java.awt.HeadlessException;
+import java.io.File;
+import java.io.IOException;
 
 import java.net.UnknownHostException;
 import java.text.DateFormat;
@@ -93,6 +96,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         inicio_sesion_jMenuItem = new javax.swing.JMenuItem();
         cerrar_sesion_jMenuItem = new javax.swing.JMenuItem();
         eliminar_cuenta_jMenuItem = new javax.swing.JMenuItem();
+        ayuda_jMenuItem = new javax.swing.JMenuItem();
 
         jMenuItem1.setText("jMenuItem1");
 
@@ -156,6 +160,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
             }
         });
         opciones_jMenu.add(eliminar_cuenta_jMenuItem);
+
+        ayuda_jMenuItem.setText("Ayuda");
+        ayuda_jMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ayuda_jMenuItemActionPerformed(evt);
+            }
+        });
+        opciones_jMenu.add(ayuda_jMenuItem);
 
         opciones_jMenuBar.add(opciones_jMenu);
 
@@ -315,6 +327,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_eliminar_cuenta_jMenuItemActionPerformed
 
+    private void ayuda_jMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ayuda_jMenuItemActionPerformed
+        try {
+            Desktop.getDesktop().open(new File("src/Complementos/manual_de_usuario_resumen_de_los_partidos.pdf"));
+        } catch (IOException ex) {
+           JOptionPane.showMessageDialog(null, ex.toString(), "", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_ayuda_jMenuItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -343,6 +363,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem ayuda_jMenuItem;
     private javax.swing.JMenuItem cerrar_sesion_jMenuItem;
     private javax.swing.JLabel consultar_resumen_jLabel;
     private javax.swing.JLabel crud_comentarios_jLabel;
