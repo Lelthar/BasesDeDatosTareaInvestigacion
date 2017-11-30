@@ -186,7 +186,7 @@
         <Container class="javax.swing.JPanel" name="panelScroll">
           <Properties>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[897, 1000]"/>
+              <Dimension value="[897, 300]"/>
             </Property>
           </Properties>
 
@@ -198,7 +198,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="1000" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="300" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -209,6 +209,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Comentar"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnComentarActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

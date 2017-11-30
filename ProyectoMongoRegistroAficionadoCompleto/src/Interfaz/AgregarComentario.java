@@ -9,12 +9,16 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -35,51 +39,57 @@ import javax.swing.JTextArea;
  * @author Gerald
  */
 public class AgregarComentario extends javax.swing.JFrame {
-    int y = 300;
+    public int tamanoY = 300;
+    public int posicionX = 10;
+    public int posicionY = 10;
+    
+    private String numero_aficionado;
+    
+    private int numero_resumen;
+    
+    private int numero_comentarios;
     
     private DB baseDatos;
-    private DBCollection tabla;
+    
+    private DBCollection tablaAficionado;
+    private DBCollection tablaPartido;
+    private DBCollection tablaResumen_partido;
+    private DBCollection tablaVideos;
+    private DBCollection tablaComentarios;
+    private DBCollection tablaAficionado_borrado;
     
     ArrayList<String> videosPath = new ArrayList<>();
     /**
      * Creates new form AgregarComentario
      */
-    public AgregarComentario() {
+    public AgregarComentario(String aficionado, int pNumero_resumen) {
         initComponents();
-        //this.setLayout(null);
- 
+        this.numero_aficionado = aficionado;
         
-        /*ImageIcon foto = new ImageIcon("src/Complementos/flecha.png");
-        Icon iconFoto = new ImageIcon(foto.getImage().getScaledInstance(this.lblFoto.getWidth(), 
-                        this.lblFoto.getWidth(), Image.SCALE_SMOOTH));
-        this.lblFoto.setIcon(iconFoto);*/
-        //panelScroll.setLayout(new GridLayout(6, 1));
-
+        this.numero_resumen = pNumero_resumen;
         
-       /* System.out.println("Numero "+lblNumero.getLocation());
-        System.out.println("Nombre "+lblNombre.getLocation());
-        System.out.println("Correo "+lblCorreo.getLocation());
-        System.out.println("Comentario "+lblScroll.getLocation());
-        System.out.println("Foto "+lblFoto.getLocation());
-        System.out.println("Reply "+lblReply.getLocation());
-        System.out.println("Panel "+panelComentario.getLocation());*/
-       
-        agregarComentario("1", "Puto", "putoelquelolea@gmail.com", "puto el que lo lea", "src/Complementos/flecha.png", 10, 10,true);
-        agregarComentario("2", "Puto2", "putoelquelolea2@gmail.com", "puto el que lo lea x2", "src/Complementos/flecha.png", 50, 165,false);
-        agregarComentario("3", "Puto3", "putoelquelolea@gmail.com", "puto el que lo lea", "src/Complementos/flecha.png", 10, 320,true);
-        mongoConexionAficionado("MongoBaseDatos","aficionado");
+        obtenerTablas("MongoBaseDatos");
         obtenerComentarios();
+        
+        
     }
     
     /**
      * Conecta a NetBeans con Mongo.
      */
-    private void mongoConexionAficionado(String nombreBD, String nombreTabla) {
+    private void obtenerTablas(String nombreBD) {
         Mongo mongo;
         try {
             mongo = new Mongo("localhost", 27017);  
             this.baseDatos = mongo.getDB(nombreBD);
-            this.tabla = baseDatos.getCollection(nombreTabla);
+            
+            this.tablaAficionado = baseDatos.getCollection("aficionado");
+            this.tablaResumen_partido = baseDatos.getCollection("resumen_partido");
+            this.tablaVideos = baseDatos.getCollection("videos");
+            this.tablaComentarios = baseDatos.getCollection("comentarios");
+            this.tablaPartido = baseDatos.getCollection("partido");
+            this.tablaAficionado_borrado = baseDatos.getCollection("aficionado_borrado");
+            
         } catch (UnknownHostException ex) {
             JOptionPane.showMessageDialog(null, "ERROR: " + ex.toString());
         }
@@ -88,10 +98,114 @@ public class AgregarComentario extends javax.swing.JFrame {
     private void obtenerComentarios(){
         BasicDBObject documento = new BasicDBObject();
         documento.put("codigo_aficionado", "ADMINISTRADOR");
-        DBCursor  cursor = this.tabla.find(documento);
-        while(cursor.hasNext()) {
-            System.out.println(cursor.next());
+        
+        DBCursor  cursorComentarios = this.tablaComentarios.find();
+        numero_comentarios = this.tablaComentarios.find().count() + 1;
+        
+        System.out.println("1");
+        while(cursorComentarios.hasNext()) {
+            BasicDBObject consulta = new BasicDBObject();
+            DBObject tuplaComentario = cursorComentarios.next();
+            consulta.put("codigo_aficionado", tuplaComentario.get("codigo_aficionado").toString());
+            System.out.println("1");
+            if(tuplaComentario.get("numero_resumen").toString().equals(this.numero_resumen) && tuplaComentario.get("comentario_padre").toString().equals("null") && this.tablaAficionado_borrado.find(consulta).count() == 0){
+                
+                String numeroPadre = tuplaComentario.get("numero_comentario").toString();
+                DBCursor cursorComentariosHijos = this.tablaComentarios.find();
+                
+                String numeroComentario = tuplaComentario.get("numero_comentario").toString();
+                
+                BasicDBObject consultaNombreAficionado = new BasicDBObject();
+                consultaNombreAficionado.put("codigo_aficionado", tuplaComentario.get("codigo_aficionado").toString());
+                String foto = this.tablaAficionado.find(consultaNombreAficionado).next().get("foto_aficionado").toString();
+                String correo_aficionado = this.tablaAficionado.find(consultaNombreAficionado).next().get("correo_electronico").toString();
+                
+                String codigo_aficionado = tuplaComentario.get("codigo_aficionado").toString();
+                System.out.println("1");
+                String comentario_texto = tuplaComentario.get("comentario").toString();
+                agregarComentario(numeroComentario,codigo_aficionado,correo_aficionado,comentario_texto,foto,posicionX,posicionY,true);
+                
+                this.posicionX += 155;
+                this.tamanoY += 155;
+                this.panelScroll.setPreferredSize(new Dimension(897, this.tamanoY));
+                System.out.println("1");
+                while(cursorComentariosHijos.hasNext()){
+                    BasicDBObject consultaHijo = new BasicDBObject();
+                    DBObject tuplaComentarioHijo = cursorComentariosHijos.next();
+                    consultaHijo.put("codigo_aficionado", tuplaComentarioHijo.get("codigo_aficionado").toString());
+                    
+                    if(tuplaComentarioHijo.get("numero_resumen").toString().equals(this.numero_resumen) && tuplaComentarioHijo.get("comentario_padre").toString().equals(numeroPadre) && tuplaComentarioHijo.get("numero_resumen").toString().equals(this.numero_resumen) && this.tablaAficionado_borrado.find(consultaHijo).count() == 0){
+                        String numeroComentarioHijo = tuplaComentarioHijo.get("numero_comentario").toString();
+                
+                        BasicDBObject consultaNombreAficionadoHijo = new BasicDBObject();
+                        consultaNombreAficionadoHijo.put("codigo_aficionado", cursorComentariosHijos.next().get("codigo_aficionado").toString());
+                        String fotoHijo = this.tablaAficionado.find(consultaNombreAficionadoHijo).next().get("foto_aficionado").toString();
+                        String correo_aficionadoHijo = this.tablaAficionado.find(consultaNombreAficionadoHijo).next().get("correo_electronico").toString();
+
+                        String codigo_aficionadHijoo = tuplaComentarioHijo.get("codigo_aficionado").toString();
+
+                        String comentario_textoHijo = tuplaComentarioHijo.get("comentario").toString();
+                        agregarComentario(numeroComentarioHijo,codigo_aficionadHijoo,correo_aficionadoHijo,comentario_textoHijo,fotoHijo,posicionX,posicionY+50,false);
+
+                        this.posicionX += 155;
+                        this.tamanoY += 155;
+                        this.panelScroll.setPreferredSize(new Dimension(897, this.tamanoY));
+                    }else if(tuplaComentarioHijo.get("numero_resumen").toString().equals(this.numero_resumen) && this.tablaAficionado_borrado.find(consultaHijo).count() > 0){
+                        DBCursor cursorAficionadoEliminado = this.tablaAficionado_borrado.find(consultaHijo);
+                        
+                        comentarioEliminado(this.posicionX,this.posicionY,cursorAficionadoEliminado.next().get("Aqui va fecha y hora").toString());
+                        this.posicionX += 155;
+                        this.tamanoY += 155;
+                        this.panelScroll.setPreferredSize(new Dimension(897, this.tamanoY));
+                    }
+                }
+            }else if(tuplaComentario.get("numero_resumen").toString().equals(this.numero_resumen) && this.tablaAficionado_borrado.find(consulta).count() > 0){
+                
+                DBCursor cursorAficionadoEliminado = this.tablaAficionado_borrado.find(consulta);
+              
+                comentarioEliminado(this.posicionX,this.posicionY,cursorAficionadoEliminado.next().get("Aqui va fecha y hora").toString());
+                this.posicionX += 155;
+                this.tamanoY += 155;
+                this.panelScroll.setPreferredSize(new Dimension(897, this.tamanoY));
+            }
+            
         }
+        System.out.println("2");
+        BasicDBObject consultaVideos = new BasicDBObject();
+        consultaVideos.put("numero_resumen", this.numero_resumen);
+        
+        DBCursor  cursorVideos = this.tablaVideos.find(consultaVideos);
+        
+        while(cursorVideos.hasNext()) {
+            DBObject tuplasVideos = cursorVideos.next();
+            this.videosPath.add(tuplasVideos.get("video").toString());
+        }
+        
+        BasicDBObject consultaResumenes = new BasicDBObject();
+        consultaResumenes.put("numero_resumen", this.numero_resumen);
+        
+        DBCursor cursorResumen  = this.tablaResumen_partido.find(consultaResumenes);
+        DBObject tuplaResumen = null;
+        if(cursorResumen.hasNext()){
+            tuplaResumen = cursorResumen.next();
+        }
+        
+        
+        textAreaResumen.setText(tuplaResumen.get("texto_resumen").toString());
+        
+        BasicDBObject consultaPartidos = new BasicDBObject();
+        int casa = Math.round(Float.parseFloat(tuplaResumen.get("numero_partido").toString()));
+        System.out.println(casa);
+        consultaPartidos.put("numero_partido", casa);
+        
+        DBCursor cursorPartido  = this.tablaPartido.find(consultaPartidos);
+        DBObject tuplaPartido = null; 
+        if(cursorPartido.hasNext()){
+            System.out.println("awd");
+            tuplaPartido = cursorPartido.next();
+        }
+        lblEquipo1.setText(tuplaPartido.get("equipo1").toString());
+        lblEquipo2.setText(tuplaPartido.get("equipo2").toString());
     }
 
     public void agregarComentario(String numero, String nombre, String correo, String comentario, String foto, int posicionX, int posicionY, boolean padre){
@@ -126,6 +240,13 @@ public class AgregarComentario extends javax.swing.JFrame {
             JButton replayBtn = new JButton();
             replayBtn.setBounds(6,113,60,26);
             replayBtn.setText("Reply");
+            
+            replayBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                abrirVentanaComentarActionPerformed(evt);
+            }
+        });
+            
             panelPrincipal.add(replayBtn);
         }
  
@@ -147,6 +268,35 @@ public class AgregarComentario extends javax.swing.JFrame {
         panelScroll.add(panelPrincipal);
         
     }
+    
+    private void abrirVentanaComentarActionPerformed(java.awt.event.ActionEvent evt) {       
+        VentanaComentarioHijo ventanaComentario = new VentanaComentarioHijo(this.numero_comentarios, this.numero_resumen, numero_aficionado);
+        this.setVisible(false);
+        ventanaComentario.setVisible(true);
+    }
+    
+    public void comentarioEliminado( int posicionX, int posicionY,String fechahora){
+        JPanel panelPrincipal = new JPanel();
+        panelPrincipal.setLayout(null);
+        
+        panelPrincipal.setBounds(posicionX,posicionY,866,145);
+        panelPrincipal.setBackground(Color.gray);
+        
+        JLabel borrado = new JLabel();
+        borrado.setBounds(300,30,78,50);
+        borrado.setText("Borrado");
+        borrado.setFont(new Font("Serif", Font.PLAIN, 20));
+        
+        JLabel fechaHoraLb = new JLabel();
+        fechaHoraLb.setBounds(250,60,350,50);
+        fechaHoraLb.setText("Fecha de eliminacion: "+fechahora);
+        fechaHoraLb.setFont(new Font("Serif", Font.PLAIN, 20));
+        
+        panelPrincipal.add(borrado);
+        panelPrincipal.add(fechaHoraLb);
+        panelScroll.add(panelPrincipal);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -196,7 +346,7 @@ public class AgregarComentario extends javax.swing.JFrame {
 
         jLabel7.setText("Comentarios: ");
 
-        panelScroll.setPreferredSize(new java.awt.Dimension(897, 1000));
+        panelScroll.setPreferredSize(new java.awt.Dimension(897, 300));
 
         javax.swing.GroupLayout panelScrollLayout = new javax.swing.GroupLayout(panelScroll);
         panelScroll.setLayout(panelScrollLayout);
@@ -206,12 +356,17 @@ public class AgregarComentario extends javax.swing.JFrame {
         );
         panelScrollLayout.setVerticalGroup(
             panelScrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1000, Short.MAX_VALUE)
+            .addGap(0, 300, Short.MAX_VALUE)
         );
 
         jScrollPane1.setViewportView(panelScroll);
 
         btnComentar.setText("Comentar");
+        btnComentar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnComentarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -311,6 +466,13 @@ public class AgregarComentario extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnVerVideoActionPerformed
 
+    private void btnComentarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComentarActionPerformed
+        // TODO add your handling code here:
+        VentanaComentario ventanaComentario = new VentanaComentario(this.numero_comentarios, this.numero_resumen, numero_aficionado);
+        this.setVisible(false);
+        ventanaComentario.setVisible(true);
+    }//GEN-LAST:event_btnComentarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -341,7 +503,7 @@ public class AgregarComentario extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new AgregarComentario().setVisible(true);
+                new AgregarComentario("ADMINISTRADOR",1).setVisible(true);
             }
         });
     }
