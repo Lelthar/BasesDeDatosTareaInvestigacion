@@ -162,6 +162,10 @@ public class VentanaComentarioHijo extends javax.swing.JFrame {
             
             this.tablaComentarios.insert(insercionDatos);
             JOptionPane.showMessageDialog(null, "Se ha añadido su comentario");
+            
+            AgregarComentario ventanaResumen = new AgregarComentario(this.codigoAficionado, this.numeroResumen);
+            this.setVisible(false);
+            ventanaResumen.setVisible(true);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

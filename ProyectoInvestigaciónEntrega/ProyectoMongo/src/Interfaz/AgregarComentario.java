@@ -21,6 +21,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -101,14 +103,14 @@ public class AgregarComentario extends javax.swing.JFrame {
         
         DBCursor  cursorComentarios = this.tablaComentarios.find();
         numero_comentarios = this.tablaComentarios.find().count() + 1;
+        System.out.println(numero_comentarios);
         
-        System.out.println("1");
         while(cursorComentarios.hasNext()) {
             BasicDBObject consulta = new BasicDBObject();
             DBObject tuplaComentario = cursorComentarios.next();
             consulta.put("codigo_aficionado", tuplaComentario.get("codigo_aficionado").toString());
-            System.out.println("1");
-            if(tuplaComentario.get("numero_resumen").toString().equals(this.numero_resumen) && tuplaComentario.get("comentario_padre").toString().equals("null") && this.tablaAficionado_borrado.find(consulta).count() == 0){
+            
+            if( Math.round(Float.parseFloat(tuplaComentario.get("numero_resumen").toString())) == this.numero_resumen && tuplaComentario.get("comentario_padre").toString().equals("null") && this.tablaAficionado_borrado.find(consulta).count() == 0){
                 
                 String numeroPadre = tuplaComentario.get("numero_comentario").toString();
                 DBCursor cursorComentariosHijos = this.tablaComentarios.find();
@@ -121,56 +123,60 @@ public class AgregarComentario extends javax.swing.JFrame {
                 String correo_aficionado = this.tablaAficionado.find(consultaNombreAficionado).next().get("correo_electronico").toString();
                 
                 String codigo_aficionado = tuplaComentario.get("codigo_aficionado").toString();
-                System.out.println("1");
+               
                 String comentario_texto = tuplaComentario.get("comentario").toString();
+                
                 agregarComentario(numeroComentario,codigo_aficionado,correo_aficionado,comentario_texto,foto,posicionX,posicionY,true);
                 
-                this.posicionX += 155;
+                this.posicionY += 155;
                 this.tamanoY += 155;
                 this.panelScroll.setPreferredSize(new Dimension(897, this.tamanoY));
-                System.out.println("1");
+                
                 while(cursorComentariosHijos.hasNext()){
+                    
                     BasicDBObject consultaHijo = new BasicDBObject();
                     DBObject tuplaComentarioHijo = cursorComentariosHijos.next();
                     consultaHijo.put("codigo_aficionado", tuplaComentarioHijo.get("codigo_aficionado").toString());
                     
-                    if(tuplaComentarioHijo.get("numero_resumen").toString().equals(this.numero_resumen) && tuplaComentarioHijo.get("comentario_padre").toString().equals(numeroPadre) && tuplaComentarioHijo.get("numero_resumen").toString().equals(this.numero_resumen) && this.tablaAficionado_borrado.find(consultaHijo).count() == 0){
+                    if(Math.round(Float.parseFloat(tuplaComentarioHijo.get("numero_resumen").toString())) == this.numero_resumen && tuplaComentarioHijo.get("comentario_padre").toString().equals(Integer.toString(Math.round(Float.parseFloat(numeroPadre)))) && this.tablaAficionado_borrado.find(consultaHijo).count() == 0){
+                        
                         String numeroComentarioHijo = tuplaComentarioHijo.get("numero_comentario").toString();
                 
                         BasicDBObject consultaNombreAficionadoHijo = new BasicDBObject();
-                        consultaNombreAficionadoHijo.put("codigo_aficionado", cursorComentariosHijos.next().get("codigo_aficionado").toString());
+                        consultaNombreAficionadoHijo.put("codigo_aficionado", tuplaComentarioHijo.get("codigo_aficionado").toString());
                         String fotoHijo = this.tablaAficionado.find(consultaNombreAficionadoHijo).next().get("foto_aficionado").toString();
                         String correo_aficionadoHijo = this.tablaAficionado.find(consultaNombreAficionadoHijo).next().get("correo_electronico").toString();
 
                         String codigo_aficionadHijoo = tuplaComentarioHijo.get("codigo_aficionado").toString();
 
                         String comentario_textoHijo = tuplaComentarioHijo.get("comentario").toString();
-                        agregarComentario(numeroComentarioHijo,codigo_aficionadHijoo,correo_aficionadoHijo,comentario_textoHijo,fotoHijo,posicionX,posicionY+50,false);
+                        agregarComentario(numeroComentarioHijo,codigo_aficionadHijoo,correo_aficionadoHijo,comentario_textoHijo,fotoHijo,posicionX+50,posicionY,false);
 
-                        this.posicionX += 155;
+                        this.posicionY += 155;
                         this.tamanoY += 155;
                         this.panelScroll.setPreferredSize(new Dimension(897, this.tamanoY));
-                    }else if(tuplaComentarioHijo.get("numero_resumen").toString().equals(this.numero_resumen) && this.tablaAficionado_borrado.find(consultaHijo).count() > 0){
+                    }else if(Math.round(Float.parseFloat(tuplaComentarioHijo.get("numero_resumen").toString())) == this.numero_resumen && this.tablaAficionado_borrado.find(consultaHijo).count() > 0){
+                         
                         DBCursor cursorAficionadoEliminado = this.tablaAficionado_borrado.find(consultaHijo);
                         
                         comentarioEliminado(this.posicionX,this.posicionY,cursorAficionadoEliminado.next().get("Aqui va fecha y hora").toString());
-                        this.posicionX += 155;
+                        this.posicionY += 155;
                         this.tamanoY += 155;
                         this.panelScroll.setPreferredSize(new Dimension(897, this.tamanoY));
                     }
                 }
-            }else if(tuplaComentario.get("numero_resumen").toString().equals(this.numero_resumen) && this.tablaAficionado_borrado.find(consulta).count() > 0){
+            }else if(Math.round(Float.parseFloat(tuplaComentario.get("numero_resumen").toString())) == this.numero_resumen && this.tablaAficionado_borrado.find(consulta).count() > 0){
                 
                 DBCursor cursorAficionadoEliminado = this.tablaAficionado_borrado.find(consulta);
               
                 comentarioEliminado(this.posicionX,this.posicionY,cursorAficionadoEliminado.next().get("Aqui va fecha y hora").toString());
-                this.posicionX += 155;
+                this.posicionY += 155;
                 this.tamanoY += 155;
                 this.panelScroll.setPreferredSize(new Dimension(897, this.tamanoY));
             }
             
         }
-        System.out.println("2");
+        
         BasicDBObject consultaVideos = new BasicDBObject();
         consultaVideos.put("numero_resumen", this.numero_resumen);
         
@@ -201,7 +207,6 @@ public class AgregarComentario extends javax.swing.JFrame {
         DBCursor cursorPartido  = this.tablaPartido.find(consultaPartidos);
         DBObject tuplaPartido = null; 
         if(cursorPartido.hasNext()){
-            System.out.println("awd");
             tuplaPartido = cursorPartido.next();
         }
         lblEquipo1.setText(tuplaPartido.get("equipo1").toString());
@@ -320,6 +325,7 @@ public class AgregarComentario extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         panelScroll = new javax.swing.JPanel();
         btnComentar = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -368,6 +374,13 @@ public class AgregarComentario extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("Volver");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -387,9 +400,13 @@ public class AgregarComentario extends javax.swing.JFrame {
                                 .addComponent(lblEquipo1, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 265, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(comboBoxVideos, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnVerVideo, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(btnVerVideo, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(comboBoxVideos, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(47, 47, 47))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -413,11 +430,16 @@ public class AgregarComentario extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblEquipo1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(27, 27, 27)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(lblEquipo1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jButton1)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(comboBoxVideos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(3, 3, 3)
@@ -452,14 +474,18 @@ public class AgregarComentario extends javax.swing.JFrame {
         System.out.println(video);
         if(video.equals("video 1")){
             try {
-                Desktop.getDesktop().open(new File(videosPath.get(0)));
+                Desktop.getDesktop().browse(new URI(videosPath.get(0)));
             } catch (IOException ex) {
                 Logger.getLogger(AgregarComentario.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(AgregarComentario.class.getName()).log(Level.SEVERE, null, ex);
+            } 
         }else{
             try {
-                Desktop.getDesktop().open(new File(videosPath.get(1)));
+                Desktop.getDesktop().browse(new URI(videosPath.get(1)));
             } catch (IOException ex) {
+                Logger.getLogger(AgregarComentario.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (URISyntaxException ex) {
                 Logger.getLogger(AgregarComentario.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -472,6 +498,11 @@ public class AgregarComentario extends javax.swing.JFrame {
         this.setVisible(false);
         ventanaComentario.setVisible(true);
     }//GEN-LAST:event_btnComentarActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        this.setVisible(false);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -513,6 +544,7 @@ public class AgregarComentario extends javax.swing.JFrame {
     private javax.swing.JButton btnComentar;
     private javax.swing.JButton btnVerVideo;
     private javax.swing.JComboBox<String> comboBoxVideos;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
